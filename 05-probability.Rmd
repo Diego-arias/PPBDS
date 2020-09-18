@@ -1114,19 +1114,19 @@ As you may have noticed, if you calculated the value using the first method, you
 
 <!-- Difference between 0.04 and 0.06 is rarely significant. And is hardly ever a good reason to decide X over Y. -->
 
-## Prudence
+## Wisdom
 
-The PPBDS contains four important themes that are relevant in all chapters: Prudence, Temperance, Fortitude, and Justice. As you move through the textbook, you will be building on and refining these concepts.
+The PPBDS contains four important themes that are relevant in all chapters: Wisdom, Temperance, Courage, and Justice. As you move through the textbook, you will be building on and refining these concepts.
 
-```{r, echo=FALSE, fig.margin=TRUE, fig.cap="Prudence."}
+```{r, echo=FALSE, fig.margin=TRUE, fig.cap="Wisdom."}
 
-knitr::include_graphics("other/images/prudence.jpg")
+knitr::include_graphics("other/images/Wisdom.jpg")
 
 ```
 
-The first theme of prudence is about whether the numbers we have capture the concepts we care about. We should be concerned about whether our data and models are representative of the problem.
+The first theme of Wisdom is about whether the numbers we have capture the concepts we care about. We should be concerned about whether our data and models are representative of the problem.
 
-Parameter uncertainty is a reason to exercise prudence. Suppose your friend sets up a pseudo-casino in the playground of the neighborhood school. She's offering everyone the opportunity to play probability games and bet money. The first game is simple: coin tosses. If the coin lands on heads, you get five dollars. If it lands on tails, you pay three dollars.
+Parameter uncertainty is a reason to exercise Wisdom. Suppose your friend sets up a pseudo-casino in the playground of the neighborhood school. She's offering everyone the opportunity to play probability games and bet money. The first game is simple: coin tosses. If the coin lands on heads, you get five dollars. If it lands on tails, you pay three dollars.
 
 You have a sneaking suspicion that the coin isn't fair and you ask your friend to flip it 10 times to test your theory. However, you must not be overconfident. 10 observations might be too few to judge the fairness of the coin. Perhaps your friend secretly switches coins when it comes time for the actual betting and your sample in the initial simulation is not representative. You might be nervous about losing your money and even miscount the number of heads and tails. These are all examples of *parameter uncertainty*. Sometimes, a model has the correct form, but it's not practical to run the simulation millions of times to be certain of the outcome. It's not possible to be absolutely certain that your friend isn't switching coins. A perfect world does not exist, so we must have reservations when drawing likely conclusions.
 
@@ -1136,7 +1136,7 @@ We need to be aware that sometimes it is not possible to capture all the variabl
 
 ```{r, echo=FALSE, fig.margin=TRUE, fig.cap="Temperance."}
 
-knitr::include_graphics("other/images/temperance.jpg")
+knitr::include_graphics("other/images/Temperance.jpg")
 
 ```
 
@@ -1162,16 +1162,16 @@ What does this mean? Well imagine a crowd playing Three Card Monte in the street
 
 We need patience in order to study and understand the unknown unknowns in our data. Patience is also important when we analyze the "realism" of our models. When we created the mathematical probability distribution for presidential elections, for instance, we assumed that the Democratic candidate would have a 50% chance of winning each vote in the electoral college. By comparing the mathematical model to our empirical cases, however, we recognize that the mathematical model is unlikely to be true. The mathematical model suggested that getting fewer than 100 votes is next to impossible, but many past Democratic candidates in the empirical distribution received less than 100 electoral votes.
 
-## Fortitude
+## Courage
 
-```{r, echo=FALSE, fig.margin=TRUE, fig.cap="Fortitude."}
+```{r, echo=FALSE, fig.margin=TRUE, fig.cap="Courage."}
 
-knitr::include_graphics("other/images/fortitude.jpg")
+knitr::include_graphics("other/images/Courage.jpg")
 
 ```
-Data science involves words, math, and code. Code is the most important element. Turning an idea into code requires *fortitude*.
+Data science involves words, math, and code. Code is the most important element. Turning an idea into code requires *Courage*.
 
-Fortitude helps us account for unmodeled variation. Recall the following equation.
+Courage helps us account for unmodeled variation. Recall the following equation.
 
 $$outcome = model + what is not in the model$$
 ```{r, echo=FALSE, fig.margin=TRUE, fig.cap="De Finetti."}
@@ -1194,11 +1194,11 @@ A residual is the variation that is not contained in the model. This is explains
 
 ```{r, echo=FALSE, fig.margin=TRUE, fig.cap="Justice."}
 
-knitr::include_graphics("other/images/justice.jpg")
+knitr::include_graphics("other/images/Justice.jpg")
 
 ```
 
-Justice in data science is all about making sure that are models are as "fair" and unbiased as possible. Model structure is one of the most important ideas under the theme of justice.
+Justice in data science is all about making sure that are models are as "fair" and unbiased as possible. Model structure is one of the most important ideas under the theme of Justice.
 
 In the section about N models, we talked about the number of heads we would get from flipping a coin 20 times. One of the important parts of model structure is compressing ideas like the coin toss experiment into mathematical expressions.
 
@@ -1214,7 +1214,7 @@ This is the experiment we simulated in the section about N models. We flipped a 
 $$ H \sim B(p, n = 20)$$
 Another question to consider is whether the models we generate while calculating probabilities are predictive or causal. Knowing the difference helps us fairly interpret the data. Every model is predictive in the sense that, if you give me new data drawn from a stable distribution, I can give you a predictive forecast. But only a subset of those models are causal, meaning that, for a given individual, you can change the value of one input and figure out what the new output would be and then, from that, calculate the causal effect.
 
-For the purposes of this chapter, everything we worked with was predictive. We did not attempt to make causal claims. If we wanted to make a causal claim, we would need to feature at least two different ways of doing an experiment. For instance, we could look at how the way in which you flip a coin affects the outcome. We could compare the number of heads we get from catching a coin in the air versus letting it fall to the ground. An important part of justice is understanding the distinction between predictive and causal models.
+For the purposes of this chapter, everything we worked with was predictive. We did not attempt to make causal claims. If we wanted to make a causal claim, we would need to feature at least two different ways of doing an experiment. For instance, we could look at how the way in which you flip a coin affects the outcome. We could compare the number of heads we get from catching a coin in the air versus letting it fall to the ground. An important part of Justice is understanding the distinction between predictive and causal models.
 
 ## Conclusion
 
