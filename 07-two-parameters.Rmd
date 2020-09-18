@@ -670,7 +670,7 @@ mad(x)
 
 Thus, the full equation of MAD SD is
 
-$$ MADsd = median(|Yi – median(Yi|) $$
+$$ MADsd = 1.483 * median(|Yi – median(Yi|) $$
 
 Before moving on to the next section of this chapter, take a second to make sure you understand what MAD SD and how it is calculated - it will play a very big role in demonstrating the uncertainty of most of our future parameters in the book
 
