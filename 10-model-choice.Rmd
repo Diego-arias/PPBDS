@@ -9,7 +9,6 @@ output_yaml:
 
 <!-- Replace lm() with stan_glm()? -->
 
-<!-- Do we need to discuss `x`/`y` interface so much?  -->
 
 <!-- Get rid of multi-category example discussion? No! Hope to do pyTorch at some point. -->
 
@@ -19,7 +18,6 @@ output_yaml:
 
 <!-- 4) I am concerned about the ames_snippets.R code used in the original but, maybe, not needed here. -->
 
-<!-- 5) I totally skipped the workflow chapter (8) in the original. Is that OK? -->
 
 <!-- 6) Many sections begun with a weird code chunk. These should be cleaned up and organized. -->
 
@@ -63,7 +61,7 @@ The Ames housing data set is an excellent resource for learning about models. It
 
 It makes sense to start with the outcome we want to predict: the last sale price of the house (in USD): 
 
-<!-- DK: Clean up these plots? -->
+<!-- DK: Clean up these plots? Why not? -->
 
 ```{r}
 ggplot(ames, aes(x = Sale_Price)) + 
@@ -71,6 +69,8 @@ ggplot(ames, aes(x = Sale_Price)) +
 ```
 
 The data are right-skewed; there are more inexpensive houses than expensive ones. The median sale price was \$`r format(median(ames$Sale_Price), big.mark = ",")` and the most expensive house was \$`r format(max(ames$Sale_Price), big.mark = ",")`. When modeling this outcome, a strong argument can be made that the price should be log-transformed. The advantages of doing this are that no houses would be predicted with negative sale prices and that errors in predicting expensive houses will not have an undue influence on the model. Also, from a statistical perspective, a logarithmic transform may also _stabilize the variance_ in a way that makes inference more legitimate. Let's visualize the transformed data:
+
+<!-- DK: Do we need to discuss logs, either here or earlier in the book? -->
 
 ```{r}
 ggplot(ames, aes(x = Sale_Price)) + 
@@ -128,7 +128,7 @@ Also notable is the "Iowa Department of Transportation (DOT) and Rail Road" neig
 knitr::include_graphics("10-model-choice/images/dot_rr.png")
 ```
 
-It is critical to conduct _exploratory data analysis_ prior to beginning any modeling. These housing data have characteristics that present interesting challenges about how the data should be processed and modeled. We describe many of these in later sections. Some basic questions that could be examined include: 
+It is _critical_ to conduct _exploratory data analysis_ prior to beginning any modeling. These housing data have characteristics that present interesting challenges about how the data should be processed and modeled. We describe many of these in later sections. Some basic questions that could be examined include: 
 
  * Are there any odd or noticeable things about the distributions of the individual predictors? Is there much skewness or any pathological distributions? 
 
@@ -136,15 +136,7 @@ It is critical to conduct _exploratory data analysis_ prior to beginning any mod
 
  * Are there associations between predictors and the outcomes? 
 
-Many of these questions will be revisited as these data are used in upcoming examples.The important code that we will carry forward is:
- 
- 
-```{r, eval = FALSE}
-library(tidymodels)
-data(ames)
-ames <- ames %>% 
-  mutate(Sale_Price = log10(Sale_Price))
-``` 
+Many of these questions will be revisited as these data are used in upcoming examples. 
 
 ## Spending our data {#splitting}
 
@@ -188,17 +180,7 @@ dim(ames_train)
 
 These objects are data frames with the same _columns_ as the original data but only the appropriate _rows_ for each set. 
 
-Simple random sampling is appropriate in many cases but there are exceptions. When there is a dramatic _class imbalance_ in classification problems, one class occurs much less frequently than another. Using a simple random sample may haphazardly allocate these infrequent samples disproportionately into the training or test set. To avoid this, _stratified sampling_ can be used. Another difficult case is when the data have a significant _time_ component, such as time series data. Here, it is more common to use the most recent data as the test set. The **rsample** package contains a function called `initial_time_split()` that is very similar to `initial_split()`. Instead of using random sampling, the `prop` argument denotes what proportion of the first part of the data should be used as the training set; the function assumes that the data have been pre-sorted in an appropriate order. 
-
-### What proportion should be used? 
-
 The amount of data that should be allocated when splitting the data is highly dependent on the context of the problem at hand. Too much data in the training set lowers the quality of the performance estimates. Conversely, too much data in the test set handicaps the model's ability to find appropriate parameter estimates. There are parts of the statistics community that eschew test sets in general because they believe all of the data should be used for parameter estimation. While there is merit to this argument, it is good modeling practice to have an unbiased set of observations as the final arbiter of model quality. A test set should be avoided only when the data are pathologically small.
-
-### What about a validation set? 
-
-Previously, when describing the goals of data splitting, we singled out the test set as the data that should be used to conduct a proper evaluation of model performance on the final model(s). This begs the question of, "How can we tell what is best if we don't measure performance until the test set?" 
-
-It is common to hear about _validation sets_ as an answer to this question, especially in the neural network and deep learning literature. The validation set was originally defined in the early days of neural networks when researchers realized that measuring performance by re-predicting the training set samples led to results that were overly optimistic (significantly, unrealistically so). This led to models that overfit, meaning that they performed very well on the training set but poorly on the test set. To combat this issue, a small validation set of data were held back and used to measure performance as the network was trained. Once the validation set error rate began to rise, the training would be halted. In other words, the validation set was a means to get a rough sense of how well the model performed prior to the test set. It is largely semantics as to whether validation sets are a subset of the training set or a third allocation in the initial split of the data.
 
 
 ## Feature engineering with recipes {#recipes}
@@ -231,6 +213,8 @@ In this section, we will focus on a small subset of the predictors available in 
  * The year built (`Year_Built`)
 
  * The type of building (`Bldg_Type` with values `r val_list(ames_train$Bldg_Type)`)
+
+<!-- DK: Introduce lm here? Or earlier? -->
 
 Suppose that an initial ordinary linear regression model were fit to these data. A  standard call to `lm()`, a function similar to `stan_glm()`, might look like:
 
@@ -270,7 +254,7 @@ Let's break this down:
 
 1. `step_dummy()` is used to specify which variables should be converted from a qualitative format to a quantitative format, in this case, using dummy or indicator variables. An indicator or dummy variable is a binary numeric variable (a column of ones and zeroes) that encodes qualitative information; we will dig deeper into these kinds of variables in Section \@ref(dummies). 
 
-The function `all_nominal()` captures the names of any columns that are currently factor or character (i.e., nominal) in nature. This is a **dplyr** selector function similar to `starts_with()` or `matches()` but can only be used inside of a recipe. 
+The function `all_nominal()` captures the names of any columns that are currently factor or character (i.e., nominal) in nature. This is a **dplyr** selector function similar to `starts_with()` or `matches()` but which can only be used inside of a recipe. 
 
 
 What is the advantage to using a recipe? There are a few, including:
@@ -291,7 +275,8 @@ Remember that when invoking the `recipe()` function, the steps are not estimated
 For our example recipe, we can now `prep()`: 
 
 ```{r}
-simple_ames <- prep(simple_ames, training = ames_train)
+simple_ames <- prep(simple_ames, 
+                    training = ames_train)
 simple_ames
 ``` 
 
@@ -309,8 +294,12 @@ names(test_ex) %>%
 
 Note the dummy variable columns starting with `Neighborhood_`. The `bake()` function can also take selectors so that, if we only wanted the neighborhood results, we could use:
 
+<!-- DK: When do we explain starts_with() and friends? Maybe there is a preliminaries section for each chapter which teaches some more cool stuff? -->
+
 ```{r, eval = FALSE}
-bake(simple_ames, ames_test, starts_with("Neighborhood_"))
+bake(simple_ames, 
+     ames_test, 
+     starts_with("Neighborhood_"))
 ```
 
 To get the processed version of the training set, we use `bake()` and pass in the argument `ames_train`.
@@ -383,9 +372,6 @@ Why not all five? The most basic reason is simplicity; if you know the value for
 
 The full set of encodings can be used for some models. This is traditionally called the "one-hot" encoding and can be achieved using the `one_hot` argument of `step_dummy()`. 
 
-One helpful feature of `step_dummy()` is that there is more control over how the resulting dummy variables are named. In base R, dummy variable names mash the variable name with the level, resulting in names like `NeighborhoodVeenker`. Recipes, by default, use an underscore as the separator between the name and level (e.g., `Neighborhood_Veenker`) and there is an option to use custom formatting for the names. The default naming convention in recipes makes it easier to capture those new columns in future steps using a selector, such as `starts_with("Neighborhood_")`. 
-
-
 Different recipe steps can have different effects on columns of the data. For example, `step_log()` modifies a column in-place without changing the name. Other steps, such as `step_dummy()` eliminate the original data column and replace it with one or more columns with different names. This behavior depends on the type of operation being done. 
 
 
@@ -420,12 +406,15 @@ simple_ames <-
 
 Additional interactions can be specified in this formula by separating them by `+`. Also note that the recipe will only utilize interactions between different variables; if the formula uses `var_1:var_1`, this term will be ignored. 
 
+<!-- DK: Delete spline discussion and usage? I am torn! -->
 
 ### Spline functions
 
 When a predictor has a nonlinear relationship with the outcome, some types of predictive models can adaptively approximate this relationship during training. However, simpler is usually better and it is not uncommon to try to use a simple model, such as a linear fit, and add in specific non-linear features for predictors that may need them. One common method for doing this is to use _spline_ functions to represent the data. Splines replace the existing numeric predictor with a set of columns that allow a model to emulate a flexible, non-linear relationship. As more spline terms are added to the data, the capacity to non-linearly represent the relationship increases. Unfortunately, it may also increase the likelihood of picking up on data trends that occur by chance (i.e., over-fitting). 
 
 If you have ever used `geom_smooth()` within a `ggplot`, you have probably used a spline representation of the data. For example, each panel below uses a different number of smooth splines for the latitude predictor:
+
+<!-- DK: This is a nice plot! Why not show students how to make it? Perhaps the preiminaries for this chapter could explain patchwork? And logs? And splines? -->
 
 ```{r}
 library(patchwork)
@@ -487,9 +476,6 @@ ames_rec %>%
   update_role(address, new_role = "street address")
 ```
 
-
-You have learned about using recipes for flexible feature engineering and data preprocessing, from creating dummy variables to handling class imbalance and more. Feature engineering is an important part of the modeling process where information leakage can easily occur and good practices must be adopted. Between the **recipes** package and other packages that extend recipes, there are over 100 available steps. All possible recipe steps are enumerated at [`tidymodels.org/find`](https://www.tidymodels.org/find/). The recipes framework provides a rich data manipulation environment for preprocessing and transforming data prior to modeling. 
-Additionally, [`tidymodels.org/learn/develop/recipes/`](https://www.tidymodels.org/learn/develop/recipes/) shows how custom steps can be created.
 
 Our code so far:
 
@@ -561,11 +547,11 @@ Note that these interfaces are heterogeneous in either how the data are passed t
 
 For tidymodels, the approach to specifying a model is intended to be more unified: 
 
-1. **Specify the _type_ of model based on its mathematical structure** (e.g., linear regression, random forest, _K_-nearest neighbors, etc). 
+1. **Specify the _type_ of model based on its mathematical structure**. 
 
 2. **Specify the _engine_ for fitting the model.** Most often this reflects the software package that should be used. 
 
-3. **When required, declare the _mode_ of the model.** The mode reflects the type of prediction outcome. For numeric outcomes, the mode is _regression_; for qualitative outcomes, it is _classification_^[Note that **parsnip** constrains the outcome column of a classification models to be encoded as a _factor_; using binary numeric values will result in an error.]. If a model can only create one type of model, such as linear regression, the mode is already set. 
+3. **When required, declare the _mode_ of the model.** The mode reflects the type of prediction outcome. For numeric outcomes, the mode is _regression_; for qualitative outcomes, it is _classification_. Note that **parsnip** constrains the outcome column of a classification models to be encoded as a _factor_; using binary numeric values will result in an error. If a model can only create one type of model, such as linear regression, the mode is already set. 
 
 These specifications are built _without referencing the data_. For example, for the three cases above: 
 
@@ -581,8 +567,7 @@ linear_reg() %>%
 ```
 
 
-Once the details of the model have been specified, the model estimation can be done with either the `fit()` function (to use a formula) or the `fit_xy()` function (when your data are already pre-processed). The **parsnip** package allows the user to be indifferent to the interface of the underlying model; you can always use a formula even if the modeling package's function only has the `x`/`y` interface. 
-
+Once the details of the model have been specified, the model estimation can be done using a formula with the `fit()` function. The **parsnip** package allows the user to be indifferent to the interface of the underlying model. 
 
 
 Let's walk through how to predict the sale price of houses in the Ames data as a function of only longitude and latitude. 
@@ -598,14 +583,8 @@ lm_model <-
 lm_form_fit <- 
   lm_model %>% 
   fit(Sale_Price ~ Longitude + Latitude, data = ames_train)
-
-lm_xy_fit <- 
-  lm_model %>% 
-  fit_xy(x = ames_train %>% select(Longitude, Latitude),
-         y = ames_train %>% pull(Sale_Price))
     
 lm_form_fit
-lm_xy_fit
 ```
 
 
@@ -654,7 +633,7 @@ ames_test_small <- ames_test %>% slice(1:5)
 predict(lm_form_fit, new_data = ames_test_small)
 ```
 
-The row order of the predictions are always the same as the original data. Why are there leading dot in some of the column names? Some tidyverse and tidymodels arguments and return values contain periods. This is to protect against merging data with duplicate names. There are some data sets that contain predictors names `pred`! 
+The row order of the predictions are always the same as the original data. Why is there a leading dot in some of the column names? Some tidyverse and tidymodels arguments and return values contain periods. This is to protect against merging data with duplicate names. There are some data sets that contain predictors named `pred`! 
 
 
 These three rules make it easier to merge predictions with the original data: 
@@ -715,9 +694,6 @@ ames_test_small %>%
 This demonstrates the benefit of homogenizing the data analysis process and syntax across different models. It enables the user to spend their time on the results and interpretation rather than having to focus on the syntactical differences between R packages. 
 
 
-We have introduced the **parsnip** package, which provides a common interface for models across R packages using a standard syntax. The interface and resulting objects have a predictable structure. 
-
-
 ## A model workflow {#workflows}
 
 In the previous two sections, we discussed the **recipes** and **parsnip** packages. These packages can be used to prepare the data for analysis and fitting the model. This chapter introduces a new object called a _model workflow_. The purpose of this object is to encapsulate the major pieces of the modeling _process_. The workflow is important in two ways. First, using a workflow object encourages good methodology since it is a single point of entry to the estimation components of a data analysis. Second, it enables the user to better organize their projects.  
@@ -729,7 +705,7 @@ So far, when we have used the term "the model", we have meant a structural equat
 
 $$ \hat{y}_i = \hat{\beta}_0 + \hat{\beta}_1x_{i1} + \ldots + \hat{\beta}_px_{ip} $$
 
-While this is a _linear_ model, it is only linear in the parameters. The predictors could be nonlinear terms (such as the $log(x_i)$). 
+While this is a _linear_ model, it is only linear in the parameters. The predictors could be nonlinear terms like $log(x_i)$. 
 
 For some data sets that are straightforward in nature, fitting the model itself may be the entire process. However, there are a variety of choices and additional steps that often occur _before_ the model is fit:
 
@@ -747,7 +723,7 @@ It is important to focus on the broader _modeling process_, instead of only fitt
 In other software, such as Python or Spark, similar collections of steps are called  _pipelines_. In tidymodels, the term "pipeline" already connotes a sequence of operations chained together with a pipe operator (such as `%>%`). Rather than using ambiguous terminology in this context, we call the sequence of computational operations related to modeling **workflows**. 
 
 
-Binding together the analytical components of a data analysis is important for another reason. Future chapters will demonstrate how to accurately measure performance, as well as how to optimize structural parameters (i.e. model tuning). To correctly quantify model performance on the training set, we recommend using _resampling_ methods. To do this properly, no data-driven parts of the analysis should be excluded from validation. To this end, the workflow must include all significant estimation steps.
+Binding together the analytical components of a data analysis is important for another reason. We will learn how to accurately measure performance, as well as how to optimize structural parameters (i.e. model tuning). To correctly quantify model performance on the training set, we recommend using _resampling_ methods. To do this properly, no data-driven parts of the analysis should be excluded from validation. To this end, the workflow must include all significant estimation steps.
 
 To illustrate, consider PCA signal extraction. This is a way to replace correlated predictors with new artificial features that are uncorrelated and capture most of the information in the original set. The new features would be used as the predictors and least squares regression could be used to estimate the model parameters. 
 
@@ -838,53 +814,15 @@ lm_wflow <-
 lm_wflow
 ```
 
-We described the `prep()`, `bake()`, and `juice()` functions for using the recipe with a modeling function. This can be onerous, so the `fit()` method for workflow objects automates this process: 
+Use `fit()` to complete the model and `predict()` to create predictions from the fitted model.
 
-<!-- DK: Drop the prep/juice/fit discussions? We should shorten this. -->
 
 ```{r}
-# Does `prep()`, `juice()`, and `fit()` in one step:
-
 lm_fit <- fit(lm_wflow, ames_train)
-
-# Does `bake()` and `predict()` automatically:
 
 predict(lm_fit, ames_test %>% slice(1:3))
 ```
 
-If we need the bare model object or recipe, there are `pull_*` functions that can retrieve them: 
-
-```{r}
-# Get the recipe and run `tidy()` method: 
-
-lm_fit %>% 
-  pull_workflow_prepped_recipe() %>% 
-  tidy()
-
-# To tidy the model fit: 
-
-lm_fit %>% 
-
-  # This returns the parsnip object:
-  
-  pull_workflow_fit() %>% 
-  
-  # Now tidy the linear model object:
-  
-  tidy() %>% 
-  slice(1:5)
-```
-
-
-#### Tree-based models {-}
-
-When we fit a tree to the data, the **parsnip** package understands what the modeling function would do. For example, if a random forest model is fit using the **ranger** or **randomForest** packages, the workflow knows predictors columns that are factors should be left as-is. 
-
-As a counter example, a boosted tree created with the **xgboost** package requires the user to create dummy variables from factor predictors (since `xgboost::xgb.train()` will not). This requirement is embedded into the model specification object and a workflow using **xgboost** _will_ create the indicator columns for this engine. Also note that a different engine for boosted trees, C5.0, does not require dummy variables so none are made by the workflow. 
-
-This determination is made for _each model and engine combination_. 
-
-  
 We have learned that the modeling process encompasses more than just estimating the parameters of an algorithm that connects predictors to an outcome. This process also includes preprocessing steps and operations taken after a model is fit. We introduced a concept called a **model workflow** that can capture the important components of the modeling process. 
 
 For the Ames data, the updated code:
@@ -919,13 +857,10 @@ lm_wflow <-
 lm_fit <- fit(lm_wflow, ames_train)
 ```
 
-
-
-
 ## Judging model effectiveness {#performance}
 
 
-Once we have a model, we need to know how well it works. A quantitative approach for estimating effectiveness allows us to understand the model, to compare different models, or to tweak the model to improve performance. Our focus in tidymodels is on _empirical validation_; this usually means using data that were not used to create the model as the substrate to measure effectiveness. 
+Once we have a model, we need to know how well it works. A quantitative approach for estimating effectiveness allows us to understand the model, to compare different models, or to tweak the model to improve performance. Our focus in tidymodels is on _empirical validation_; this usually means using data that were not used to create the model as the substrate on which we measure effectiveness. 
 
 
 The choice of which metrics to examine can be critical. For example, two common metrics for regression models are the root mean squared error (RMSE) and the coefficient of determination (a.k.a. $R^2$). The former measures _accuracy_ while the latter measures _correlation_. These are not necessarily the same thing. This figure demonstrates the difference between the two: 
@@ -956,10 +891,11 @@ This section will largely focus on the **yardstick** package. Before illustratin
 
 ### Performance metrics and inference
 
+<!-- DK: We could put these sections at the start of their respective chapters. -->
 
 The effectiveness of any given model depends on how the model will be used. An inferential model is used primarily to understand relationships, and typically is discussed with a strong focus on the choice (and validity) of probabilistic distributions and other generative qualities that define the model. For a model used primarily for prediction, by contrast, predictive strength is primary and concerns about underlying statistical qualities may be less important. Predictive strength is usually focused on how close our predictions come to the observed data, i.e., fidelity of the model predictions to the actual results. This section focuses on functions that can be used to measure predictive strength. However, our advice for those developing inferential models is to use these techniques _even when the model will not be used with the primary goal of prediction_. 
 
-A longstanding issue with the practice of inferential statistics is that, with a focus purely on inference, it is difficult to assess the credibility of a model. For example, consider the Alzheimer's disease data  where patients were studied to determine the factors that influence cognitive impairment. Assume that we build a model, using the standard statistical approach. We would, normally, not even be required to calculate how closely this model fits the actual data. 
+A longstanding issue with the practice of inferential statistics is that, with a focus purely on inference, it is difficult to assess the credibility of a model. For example, consider Alzheimer's disease data used to study the factors that influence cognitive impairment. Assume that we build a model, using the standard statistical approach. We would, normally, not even be required to calculate how closely this model fits the actual data. 
 
 Using resampling methods, we can estimate the accuracy of this model to be about 73.3%. Accuracy is often a poor measure of model performance; we use it here because it is commonly understood. If the model has 73.3% fidelity to the data, should we trust the conclusions produced by the model? We might think so until we realize that the baseline rate of non-impaired patients in the data is 72.7%. This means that, despite our statistical analysis, a fancy model appears to be *only 0.6% better than a simple heuristic that always predicts patients to be unimpaired*, irregardless of the observed data. 
 
@@ -969,7 +905,9 @@ Using resampling methods, we can estimate the accuracy of this model to be about
 The point of this analysis is to demonstrate the idea that **optimization of statistical characteristics of the model does not imply that the model fits the data well.** Even for purely inferential models, some measure of fidelity to the data should accompany the inferential results. Using this, the consumers of the analyses can calibrate their expectations of the results of the statistical analysis. 
 ```
 
-In the remainder of this section, general approaches for evaluating models via empirical validation are discussed. These approaches are grouped by the nature of the outcome data: purely numeric, binary classes, and three or more class levels. 
+<!-- DK: Next edition: Bring back multi-classification -->
+
+In the remainder of this section, general approaches for evaluating models via empirical validation are discussed. These approaches are grouped by the nature of the outcome data: purely numeric (Chapter \@ref(continuous-response)) and binary classes (Chapter \@ref(discrete-response)). 
 
 ### Regression metrics 
 
@@ -1093,112 +1031,6 @@ autoplot(two_class_curve)
 
 There are a number of other functions that use probability estimates, including `gain_curve()`, `lift_curve()`, and `pr_curve()`. 
 
-### Multi-class classification metrics 
-
-What about data with three or more classes? To demonstrate, let's explore a different example data set that has four classes: 
-
-```{r}
-data(hpc_cv)
-str(hpc_cv)
-```
-
-As before, there are factors for the observed and predicted outcomes along with four other columns of predicted probabilities for each class. These data also include a `Resample` column. These results are for out-of-sample predictions associated with 10-fold cross-validation. For the time being, this column will be ignored. 
-
-The functions for metrics that use the discrete class probabilities are identical: 
-
-```{r}
-accuracy(hpc_cv, obs, pred)
-
-mcc(hpc_cv, obs, pred)
-```
-
-Note that, in these results, a "multiclass" `.estimator` is listed. Like "binary", this indicates that the formulas for outcomes with three or more class levels was used. The  Matthews correlation coefficient was originally designed for two classes but has been extended to cases with more class levels. 
-
-There are methods for using metrics that are specific to outcomes with two classes for data sets with more than two classes. For example, a metric such as sensitivity measures the true positive rate which, by definition, is specific to two classes (i.e., "event" and "non-event"). How can this metric be used in our example data? 
-
-There are wrapper methods that can be used to apply sensitivity to our four-class outcome. These options are macro-, macro-weighted, and micro-averaging: 
-
- * Macro-averaging computes a set of one-versus-all metrics using the standard two-class statistics. These are averaged. 
- 
- * Macro-weighted averaging does the same but the average is weighted by the number of samples in each class.  
- 
- * Micro-averaging computes the contribution for each class, aggregates them, then computes a single metric from the aggregates. 
-
-
-Using sensitivity as an example, the usual two-class calculation is the ratio of the number of correctly predicted events divided by the number of true events. The "manual" calculations for these averaging methods are: 
-
-```{r}
-class_totals <- 
-  count(hpc_cv, obs, name = "totals") %>% 
-  mutate(class_wts = totals / sum(totals))
-class_totals
-
-cell_counts <- 
-  hpc_cv %>% 
-  group_by(obs, pred) %>% 
-  count() %>% 
-  ungroup()
-
-# Compute the four sensitivities using 1-vs-all
-one_versus_all <- 
-  cell_counts %>% 
-  filter(obs == pred) %>% 
-  full_join(class_totals, by = "obs") %>% 
-  mutate(sens = n / totals)
-one_versus_all
-
-# Three different estimates:
-one_versus_all %>% 
-  summarize(
-    macro = mean(sens), 
-    macro_wts = weighted.mean(sens, class_wts),
-    micro = sum(n) / sum(totals)
-  )
-```
-
-Thankfully, there are easier methods for obtaining these results: 
-
-```{r}
-sensitivity(hpc_cv, obs, pred, estimator = "macro")
-sensitivity(hpc_cv, obs, pred, estimator = "macro_weighted")
-sensitivity(hpc_cv, obs, pred, estimator = "micro")
-```
-
-For metrics using probability estimates, there are some metrics with multi-class analogs. In this case, _all_ of the class probability columns must be given to the function:
-
-```{r}
-roc_auc(hpc_cv, obs, VF, F, M, L)
-```
-
-Macro-averaging is also available: 
-
-```{r}
-roc_auc(hpc_cv, obs, VF, F, M, L, estimator = "macro_weighted")
-```
-
-Finally, all of these performance metrics can be computed using **dplyr** groupings. Recall that these data have a column for the resampling groups. Passing a grouped data frame to the metric function will compute the metrics for each group: 
-
-```{r}
-hpc_cv %>% 
-  group_by(Resample) %>% 
-  accuracy(obs, pred)
-```
-
-The groupings also translate to the `autoplot()` methods:
-
-```{r}
-# Four 1-vs-all ROC curves for each fold
-
-hpc_cv %>% 
-  group_by(Resample) %>% 
-  roc_curve(obs, VF, F, M, L) %>% 
-  autoplot()
-```
-
-This can be a quick visualization method for model effectiveness. 
-
-
-Functions from the **yardstick** package measure the effectiveness of a model using data. The primary interface is based on data frames (as opposed to having vector arguments). There are a variety of regression and classification metrics and, within these, there are sometimes different estimators for the statistics. 
 
 
 ## Conclusion
