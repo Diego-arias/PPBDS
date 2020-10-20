@@ -483,7 +483,7 @@ tibble(ID = c("1", "2", "...", "473", "474",
        Treatment = c("Treatment", "?", "...", "Control", "?", "...", "?", "Control", "...", "?"),
       Attitude_End = c("10", "?", "...", "8", "?", "...", "?", "11", "...", "?")) %>%
   
-  # Then we use the gt function to make it pretty
+  # Then, we use the gt function to make it pretty
   
   gt() %>%
   cols_label(ID = md("ID"),Treatment= "Condition", Attitude_End = "Attitude at End") %>%
