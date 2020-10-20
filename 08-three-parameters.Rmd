@@ -265,7 +265,7 @@ trains %>%
 
 <!-- DK: More extreme awkwardness. -->
 
-The fitted values are the same for all Republicans and for all Democrats, as the fitted value is one of the two estimates outputed by our model. However, almost all of the residuals are different due to each observation's own variation from the fitted value estimate. This table shows how just a sample of 8 individuals captures a wide range of residuals, making it difficult to predict the age of a new individual. We can get a better picture of the unmodeled variation in our sample if we plot these three variables for all the individuals in our data. 
+The fitted values are the same for all Republicans and for all Democrats, as the model outputs one fitted value for each condition. Thus, almost all of the obeservation's residuals are different - depending on how much they vary from the fitted value estimate. This table shows how just a sample of 8 individuals captures a wide range of residuals, making it difficult to predict the age of a new individual. We can get a better picture of the unmodeled variation in our sample if we plot these three variables for all the individuals in our data. 
 
 The following three histograms show the actual outcomes, fitted values, and residuals of all people in `trains`:
 
