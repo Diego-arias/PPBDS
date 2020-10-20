@@ -475,7 +475,6 @@ The three elements of Justice in data science remain the same: predictive/causal
 
 A preceptor table for this model would look very similar to the one in the first half of this chapter, except now we have an explanatory instead of predictibe variable due to the nature of our model. Additionally, it now reflects how we are looking to explain participant's end attitudes depending on their condtion: treatment or control
 
-
 <!-- DK: We need to add Preceptor Tables here and elsewhere. -->
 
 ```{r echo = FALSE}
